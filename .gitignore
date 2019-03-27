@@ -160,6 +160,7 @@ nbproject
 yarn-error.log
 testem.log
 /typings
+__pycache__
 
 # System Files
 Thumbs.db
