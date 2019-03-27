@@ -1,7 +1,7 @@
 import sys
 from os import path
 
-from tyjgrader import utils
+from tyjgrader import utils, assignment
 
 # from sys import argv
 #
@@ -19,7 +19,7 @@ from tyjgrader import utils
 # for i in range(0, len(fields)):
 #     print(f"{fields[i]} = {replacements[i]}")
 
-# assignment.create()
-base ="https://github.com/bennowak/student-grading/tree/master"
+assignment.create()
+# base ="https://github.com/bennowak/student-grading/tree/master"
 
-utils.download_from_github(base, path.join("docs", "download.zip"))
+# utils.download_from_github(base, path.join("docs", "download.zip"))
