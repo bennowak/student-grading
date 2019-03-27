@@ -11,7 +11,7 @@ This script takes the following arguments in the specific formats given
 
 - A relative path from the directory which this script is in to the text file containing the list of students. (See Students.txt format notes below.)
 - A relative path from the directory which this script is in to the markdown file that is the "template" for the assignment. (See AssignmentGradingTEMPLATE.md description and formatting notes below.)
-- A series of key/value arguments, with keys requiring quotes and surrounded by <> symbols (ie : `"<name>"`).  The keys are :
+- A series of key/value arguments used to populate fields in the markdown grading files.  The keys require quotes and surrounded by <> symbols (ie : `"<name>"`).  The keys are :
   
     - `<name>` - The value of this key is non-relevant, and just a place holder, so `null` is fine.
     - `<assignment` - A string literal (in quotes) that will be the printed title of the assignment on generated grading sheets
