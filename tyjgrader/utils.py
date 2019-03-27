@@ -1,5 +1,6 @@
 # tyjgrader.utils module
 import os
+from urllib import request
 
 
 def get_names(names_file):
@@ -47,5 +48,15 @@ def create_eval_files(names, eval_dir, path_to_eval_template, eval_fields, eval_
                     eval_file.writelines(line)
             eval_file.close()
 
-def download_from_github(url):
-    pass
+
+def extract_base_url(url):
+    parts = url.split('/')
+    return f"{parts[0]}//{parts[2]}/{parts[3]}/{parts[4]}"
+
+
+def download_from_github(url, save_dir):
+    zip_master = f"{extract_base_url(url)}/archive/master.zip"
+    data = request.urlopen(zip_master)
+    f = open(save_dir, 'wb')
+    f.write(data.read())
+    f.close()
