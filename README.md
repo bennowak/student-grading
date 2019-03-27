@@ -2,7 +2,7 @@
 **A python module to simplify student grading from GitHub submissions**
 
 ## Overview
-The module takes a list of students and automates the process of creating directories for their submissions, followed by downloading theier respective GitHub project archived zip files.
+The module takes a list of students and automates the process of creating directories and grading sheets for their submissions.
 
 ## test.py
 This script takes the following arguments in the specific formats given
