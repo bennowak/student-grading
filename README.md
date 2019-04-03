@@ -26,7 +26,7 @@ python run_tyjgrader.py <Underscore_Title> <path_to_csv> <pathToMarkDownTEMPLATE
 ```
 _**EXAMPLE**_
 ```
-python run_tyjgrader.py HW_03_Python resources/students.csv resources/TEMPLATEAssignmentGrading.md <name> null <assignment> "Homework - 03 Python" <due> "May 31, 2019"
+python run_tyjgrader.py HW_03_Python resources/students.csv resources/TEMPLATEAssignmentGrading.md "<name>" null "<assignment>" "Homework - 03 Python" "<due>" "May 31, 2019"
 ```
 ## Output
 
