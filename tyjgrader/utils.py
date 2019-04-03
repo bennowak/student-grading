@@ -39,29 +39,12 @@ def get_students(students_csv):
     return tuple(names)
 
 
-
-
-
-
-
-
-
 def create_dirs(parent_dir, names):
     if os.path.exists(parent_dir):
         for name in names:
             os.makedirs(parent_dir + "/" + name)
 
 
-# [<name>, <assignment>, <due>]
-# [names[], title, date]
-# EXAMPLE CALL -
-# create_eval_files(
-#       names,
-#       03_Python/grades,
-#       ../templates/assignment_template.md,
-#       [<name>, <assignment>, <due>],
-#       [names[], title, date]
-#     )
 def create_eval_files(names, eval_dir, path_to_eval_template, eval_fields, eval_replacements):
     if os.path.exists(eval_dir):
         with open(path_to_eval_template) as template:
