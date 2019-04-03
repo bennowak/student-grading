@@ -17,14 +17,33 @@
 # tyjgrader.utils module
 import os
 from urllib import request
+import csv
 
 
-def get_names(names_file):
+def get_names(students_csv):
     names = []
-    with open(names_file) as f:
-        for name in f.readlines():
-            names.append(name.strip('\n'))
+    with open(students_csv) as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=',')
+        for student in csv_reader:
+            names.append(student[0].strip('\n'))
     return tuple(names)
+
+
+def get_students(students_csv):
+    names = []
+
+    with open(students_csv) as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=',')
+        for student in csv_reader:
+            names.append({"name": student[0], "url": student[1]})
+    return tuple(names)
+
+
+
+
+
+
+
 
 
 def create_dirs(parent_dir, names):
@@ -70,9 +89,9 @@ def extract_base_url(url):
     return f"{parts[0]}//{parts[2]}/{parts[3]}/{parts[4]}"
 
 
-def download_from_github(url, save_dir):
+def download_from_github(url, save_dir, assignment, student):
     zip_master = f"{extract_base_url(url)}/archive/master.zip"
     data = request.urlopen(zip_master)
-    f = open(save_dir, 'wb')
+    f = open(f"{save_dir}/{student}{assignment}.zip", 'wb')
     f.write(data.read())
     f.close()

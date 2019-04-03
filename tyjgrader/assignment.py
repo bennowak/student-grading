@@ -25,6 +25,7 @@ _sub_dirs = ["Grades", "Submissions", "Instructions", "Solutions", "NO_SUBMITS"]
 _eval_dir = _new_dir + "/" + _sub_dirs[0]
 _submit_dir = _new_dir + "/" + _sub_dirs[1]
 _name_file = argv[2]
+_student_file = argv[2]
 _template_file = argv[3]
 _eval_fields = []
 _eval_texts = []
@@ -42,12 +43,17 @@ for i in range(0, len(_eval_fields)):
 def create():
     # Make new Assignment "parent directory"
     os.makedirs(_new_dir)
-    # Extract names of students
-    names = utils.get_names(_name_file)
+    # Create tuple of students as dict("name", "url")
+    students = utils.get_students(_student_file)
+    # Create names list
+    names = [student['name'] for student in students]
     # Create Assignment grading sub-directories
     utils.create_dirs(_new_dir, _sub_dirs)
-    # Create StudentSubmission directories
+    # Create student submission folders
     utils.create_dirs(_submit_dir, names)
-    # Generate evauation files for each student
+    # Generate evaluation files for each student
     utils.create_eval_files(names, _eval_dir, _template_file, _eval_fields, _eval_texts)
 
+    for student in students:
+        print(f"{_submit_dir}/{student['name']}")
+        utils.download_from_github(student["url"], f"{_submit_dir}/{student['name']}/", _new_dir, student["name"])
