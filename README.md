@@ -68,6 +68,7 @@ Before running the script:
 - Report issues here [here](https://github.com/bennowak/student-grading/issues)
 
 
+```
     TYJ Student Grading
     Copyright (C) 2019  Benjamin Nowak
 
@@ -83,3 +84,4 @@ Before running the script:
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see http://www.gnu.org/licenses/.
+```
