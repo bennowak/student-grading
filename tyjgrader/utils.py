@@ -34,6 +34,8 @@ def get_students(students_csv):
 
     with open(students_csv) as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=',')
+        # Skip the first line which is title, date, and graded_by
+        next(csv_reader)
         for student in csv_reader:
             names.append({"name": student[0], "url": student[1]})
     return tuple(names)
@@ -45,22 +47,21 @@ def create_dirs(parent_dir, names):
             os.makedirs(parent_dir + "/" + name)
 
 
-def create_eval_files(names, eval_dir, path_to_eval_template, eval_fields, eval_replacements):
+def create_eval_files(names, eval_dir, path_to_eval_template, assignment, due_date):
     if os.path.exists(eval_dir):
         with open(path_to_eval_template) as template:
             content = template.readlines()
         for name in names:
             eval_file = open(f"{eval_dir}/" + name + ".md", 'w', 1)
             for line in content:
-                if eval_fields[0] in line:
-                    newline = line.replace(eval_fields[0], name.replace('_', ' '))
+                if "<name>" in line:
+                    newline = line.replace("<name>", name.replace('_', ' '))
                     eval_file.writelines(newline)
-                elif eval_fields[1] in line:
-                    newline = line.replace(eval_fields[1], eval_replacements[1])
-
+                elif "<assignment>" in line:
+                    newline = line.replace("<assignment>", assignment)
                     eval_file.writelines(newline)
-                elif eval_fields[2] in line:
-                    newline = line.replace(eval_fields[2], eval_replacements[2])
+                elif "<due>" in line:
+                    newline = line.replace("<due>", due_date)
                     eval_file.writelines(newline)
                 else:
                     eval_file.writelines(line)
@@ -75,6 +76,108 @@ def extract_base_url(url):
 def download_from_github(url, save_dir, assignment, student):
     zip_master = f"{extract_base_url(url)}/archive/master.zip"
     data = request.urlopen(zip_master)
-    f = open(f"{save_dir}/{student}{assignment}.zip", 'wb')
+    filename = f"{save_dir}/{student}{assignment}.zip"
+    f = open(filename.replace(' ', '_'), 'wb')
     f.write(data.read())
     f.close()
+
+
+def new_assignment(file_name, title, due_date, graded_by):
+    _res_path = os.path.join("resources", "AssignmentCSVFiles")
+    print(os.listdir(_res_path))
+    if f"{file_name}1.csv" in os.listdir(_res_path):
+        print("ERROR: A csv file with that name already exists!")
+        return False
+    else:
+        with open(os.path.join("resources", "students.txt")) as students:
+            names = students.readlines()
+        assignment_file = open(os.path.join(_res_path, f"{file_name}.csv"), 'w', 1)
+        assignment_file.writelines(f"{title}, {due_date}, {graded_by}\n")
+        for name in names:
+            assignment_file.write(f"{name.strip()}, null\n")
+        assignment_file.close()
+
+
+
+# Prompts for data and either returns a dicitonary or False if exited
+def get_input():
+    # Generate a dictionary for csv and md files available
+    csv_list = get_csv_list()
+    temp_list = get_template_list()
+    assignments = {}
+    for i in range(1, len(csv_list) + 1):
+        assignments.update({str(i): csv_list[i - 1]})
+    templates = {}
+    for i in range(1, len(temp_list) + 1):
+        templates.update({str(i): temp_list[i - 1]})
+
+    # Sentinel variables
+    valid_csv = False
+    valid_temp = False
+    selected_csv = -1
+    selected_temp = -1
+
+    # Prompt for csv file selection
+    while not valid_csv:
+        # Print selection menu
+        print("Please choose from the following assignment files")
+        for i in range(1, len(assignments) + 1):
+            print(f"{i}.) {assignments[str(i)]}")
+        print("Enter X to quit")
+        # Get valid input
+        selection = validate_input(input("Selection : "), len(assignments))
+        # If input is within valid range set selected_csv variable and exit while loop
+        if selection >= 0:
+            valid_csv = True
+            selected_csv = selection
+    # If not exiting the program
+    if selected_csv > 0:
+        # Prompt for template file selection
+        while not valid_temp:
+            # Print selection menu
+            print("Please choose from the following grading templates")
+            for i in range(1, len(templates) + 1):
+                print(f"{i}.) {templates[str(i)]}")
+            print("Enter X to quit")
+            # Get valid input
+            selection = validate_input(input("Selection : "), len(templates))
+            # If input is within valid range set selected_temp variable and exit while loop
+            if selection >= 0:
+                valid_temp = True
+                selected_temp = selection
+        # Prompt for other data
+        # title = input("What is the TITLE for the assignment? (Readable title for grade sheet, etc.")
+        # due_date = input("What is the DUE DATE for the assignment? (Readable date)")
+        folder_name = input("Please enter name for the folder. (NO SPACES, use underscore `_`").replace(' ', '_')
+        # Return a dict with data values
+        #return {"assignment": assignments[str(selected_csv)], "template": templates[str(selected_temp)]}
+        return {"assignment": assignments[str(selected_csv)]}
+    # Exit chosen; return false
+    return False
+
+
+def get_assignment_data(assignment):
+
+
+# Test for valid user input
+def validate_input(selection, choice_count):
+    if len(selection) == 1:
+        if selection.isdigit() and 0 < int(selection) <= choice_count:
+            return int(selection)
+        elif ord(selection) == 88 or ord(selection) == 120:
+            return 0
+        else:
+            return -1
+    else:
+        return -1
+
+
+def get_csv_list():
+    assignment_csv_files = os.listdir(os.path.join('.', 'resources', 'AssignmentCSVFiles'))
+    return assignment_csv_files
+
+
+def get_template_list():
+    grading_templates = os.listdir(os.path.join('.', 'resources', 'GradingMDFiles'))
+    return grading_templates
+

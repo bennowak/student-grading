@@ -15,7 +15,8 @@
    #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # tyjgrader module main run file
-from tyjgrader import assignment
+from tyjgrader import assignment, utils
 
 
-assignment.create()
+assignment.create_grades()
+# utils.new_assignment("test", "testass", "234234", "ben")
