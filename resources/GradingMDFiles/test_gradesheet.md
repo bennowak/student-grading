@@ -14,7 +14,7 @@
 
 1. Grade:<newGrade> Date: <date> Reason: <reason>
 
-## Rubric (Usually Given in TA Assignement Repo)
+## Rubric
 
 #### Basic Requirements
 
