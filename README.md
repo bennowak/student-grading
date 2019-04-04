@@ -43,8 +43,8 @@ This program is intended to reside inside a single directory where the grader (T
     - run_tyjgrader.py (program script)
 
 ## Before running the script: 
-- a **copy** of the `TEMPLATE_GradeSheet.md` file has been named and customized to reflect the rubric and grading concerns for that particular assignment, and has been placed in the `GradingMDFiles` directory.
-- a **copy** of the `TEMPLATE_Assignment.csv`file has been properly prepared, named, and moved to the `AssignmentCSVFiles` directory
+- a **copy** of the `TEMPLATE_GradeSheet.md` file must be named and customized to reflect the rubric and grading concerns for that particular assignment, and must be placed in the `GradingMDFiles` directory.
+- a **copy** of the `TEMPLATE_Assignment.csv`file must be properly prepared, named, and moved to the `AssignmentCSVFiles` directory
 
 ## The Assignment File
 - The very first line of the assignment `csv` file contains a comma-separated set of values.  
