@@ -15,9 +15,7 @@
    #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # tyjgrader module main run file
-from tyjgrader import assignment, utils
+from tyjgrader import assignment
 
 
-#print(utils.get_assignment_data("test.csv"))
-print(assignment.get_input())
-# utils.new_assignment("test", "testass", "234234", "ben")
+assignment.run()

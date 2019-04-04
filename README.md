@@ -2,42 +2,53 @@
 **A python module to simplify student grading from GitHub submissions**
 
 ## Overview
-The program takes a `csv` file containing student names, and urls for assignment submissions on GitHub, then automates the process of creating directories and grading sheets for their submissions.
+The program takes a `csv` file containing assignment data, student names, and urls for assignment submissions on GitHub, then automates the process of creating directories and grading sheets for their submissions.
 
-## run_tyjgrader.py
-This script takes the following arguments in the specific formats given
+## Process Description
+The script will search the `resources/AssignmentCSVFiles` directory for existing assignment files.  These will show up in the main running menu.  The first row of the selected `assignment.csv` file will be parsed for assignment data used to generate a specific directory structure under the `Gradings` directory. The subsequent rows contain student names, and submission URLs for processing and downloading assignments automatically.
 
-- Assignment name starting with `Homework`, `Project`, `Classwork`, `Bonus` or some other capitalized single word.  The next sequence is a two digit number.  NOTE: Single digits should be prepended with a zero `0`. Then followed with a descriptive title.  All words are to be separated b a single underscore character `_`.  To sumarize, it is absolutely mandatory that the format is in the following general format:  `Word_01_Some_Title_Here`
 
-- A relative path from the directory which this script is in to the text file containing the list of students. (See Students.txt format notes below.)
-- A relative path from the directory which this script is in to the markdown file that is the "template" for the assignment. (See AssignmentGradingTEMPLATE.md description and formatting notes below.)
-- A series of key/value arguments used to populate fields in the markdown grading files.  The keys require quotes and surrounded by <> symbols (ie : `"<name>"`).  The keys are :
-  
-    - `<name>` - The value of this key is non-relevant, and just a place holder, so `null` is fine.
-    - `<assignment` - A string literal (in quotes) that will be the printed title of the assignment on generated grading sheets
-    - `<due>` - A date value. TBD // ToDo:
+### "Parts" of the Process
 
-### Running the script
+- #### run_tyjgrader.py
+    This is the main entry point for the application.  Run the script as follows:
 
-The general call signature is as follows:
+    ```python
+    python run_tyjgrader.py
+    ```
+- #### ./tyjgrader/ (module)
+    This is the directory that contains the python processing module code
+   
+- #### ./TEMPLATES/
+    A directory of example files as the `assignment.csv`, and `grade_sheet.md` files should be laid out
+    
+- #### ./resources/
+    Contains directories for the actual `assignment.csv` and `grade_sheete.md` files.
+    
+    - #### AssignmentCSVFiles/
+        The directory for individual "assignment" `csv` data files.  These are the files that will be used to process particular assignments.  
+        **NOTE: BE SURE TO FORMAT THESE CORRECTLY IF NOT AUTOGENERATING THEM**      
+        See the `TEMPLATE_Assignment.csv` file in the `TEMPLATES` folder for clarification
 
+    - #### GradingMDFiles/
+        The directory for individual "grading sheet" `Markdown` files. These are the files that will be used to generate individual student grade sheets for particular assignments     
+        **NOTE: BE SURE TO FORMAT THESE CORRECTLY IF NOT AUTOGENERATING THEM**      
+        See the `TEMPLATE_GradeSheet.md` file in the `TEMPLATES` folder for clarification
+
+- #### ./Gradings/
+    This is where the directories that are created for grading assignments will be output.
+    
+### Output
+
+Given the following assignment `csv` file : 
+```csv
+HW00_TestGrade, Test 00, "Saturday, January 1st, 2001 at 11:59 pm", test_gradesheet.md, TA Tester
+Bee Gud, https://github.com/bennowak/student-grading
+Som Purrsen, null
+Jam Out, https://github.com/bennowak/student-grading/archive/master.zip
 ```
-python run_tyjgrader.py <Underscore_Title> <path_to_csv> <pathToMarkDownTEMPLATE> <name> null <assignment> "<assignment name"> <due> "<date as string>" 
-```
-_**EXAMPLE**_
-```
-python run_tyjgrader.py HW_03_Python resources/students.csv resources/TEMPLATEAssignmentGrading.md "<name>" null "<assignment>" "Homework - 03 Python" "<due>" "May 31, 2019"
-```
-## Output
 
-Given the following student `csv` file : 
-```
-Bee Gud, https://github.com/bennowak/student-grading/tree/master
-Som Purrsen, https://github.com/bennowak/student-grading/tree/master
-Jam Out, https://github.com/bennowak/student-grading/tree/master
-```
-
-Running the example command at the command line will yield the following structure : 
+Running the script at the command line will yield the following structure : 
 
 ![The Output](docs/Output.png)
 

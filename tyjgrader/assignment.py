@@ -30,6 +30,11 @@ def get_assignments():
     return assignments
 
 
+def run():
+    get_input()
+    return 0
+
+
 # Prompts for data and either returns a dicitonary or False if exited
 def get_input():
     # Generate a dictionary for existing csv files keyed to menu numbers
@@ -39,24 +44,24 @@ def get_input():
     # Prompt for csv file selection
     while not valid_input:
         # Print selection menu
-        print("Please choose from the following assignment files")
+        print("Please choose from the assignment files numbered 1 ... n, create a new assignment file, or quit")
         for i in range(1, len(assignments) + 1):
             print(f"{i}.) {assignments[str(i)]}")
         print("N.) Create new assignment file")
         print("X.) Quit python script")
         # Get valid input
         selection = input("Selection : ")
+        print()
         valid_input = utils.is_valid_selection(selection, len(assignments))
         if valid_input:
             if selection.isdigit():
-                # Is existing assignment
-                print("return assignments[str(selected_csv)]")
-                print(utils.get_assignment_data(assignments[selection]))
-                create_grades(utils.get_assignment_data(assignments[selection]))
-                return assignments[str(selection)]
+                # Is existing assignment file
+                process_assignment(utils.get_assignment_data(assignments[selection]))
+                return
             elif ord(selection) == 78 or ord(selection) == 110:
                 # Is new assignment
                 print("New Assignment")
+                create_new_assignment_file()
                 return
             elif ord(selection) == 88 or ord(selection) == 120:
                 # Exit program
@@ -64,63 +69,51 @@ def get_input():
                 return
 
 
-def create_grades(data):
+# ToDo: Create function for new assignment csv file creation
+def create_new_assignment_file():
+    pass
+
+
+def process_assignment(data):
     if data:
-        _new_dir = os.path.join(data["folder"])
-        _eval_dir = os.path.join(data["folder"], _sub_dirs[0])
-        _submit_dir = os.path.join(data["folder"], _sub_dirs[1])
+        _new_dir = os.path.join("Gradings", data["folder"])
+        _eval_dir = os.path.join("Gradings", data["folder"], _sub_dirs[0])
+        _submit_dir = os.path.join("Gradings", data["folder"], _sub_dirs[1])
         _assignment_file = os.path.join("resources", "AssignmentCSVFiles", data["assignment"])
         _template_file = os.path.join("resources", "GradingMDFiles", f'{data["template"]}'.strip())
+        # List of student dicts {"name", "url"}
+        students = data["students"]
 
-        # Make new Assignment "parent directory"
-        os.makedirs(_new_dir)
-        # Create tuple of students as dict("name", "url")
-        students = utils.get_students(_assignment_file)
-        # Create names list
-        names = [student['name'] for student in students]
-        # Create Assignment grading sub-directories
-        utils.create_dirs(_new_dir, _sub_dirs)
-        # Create student submission folders
-        utils.create_dirs(_submit_dir, names)
-
-        # Generate evaluation files for each student
-        utils.create_eval_files(names, _eval_dir, _template_file, data["title"], data["due_date"], data["graded_by"])
-        for student in data["students"]:
+        # Check if it's a new grading directory or an update
+        if not os.path.exists(_new_dir):
+            # Make new Assignment "parent directory"
+            os.makedirs(_new_dir)
+            # Create names list
+            names = [student['name'] for student in students]
+            # Create Assignment grading sub-directories
+            utils.create_dirs(_new_dir, _sub_dirs)
+            # Create student submission folders
+            utils.create_dirs(_submit_dir, names)
+            # Generate evaluation files for each student
+            utils.create_eval_files(names, _eval_dir, _template_file, data["title"], data["due_date"], data["graded_by"])
+            # download student assignments
+        for student in students:
+            filename = utils.create_file_name(student["name"], f'_{data["assignment"].strip(".csv")}', ".zip")
+            print(f"Checking student submission : {student['name']}")
             if not str(student["url"]).strip() == "null":
-                print(f"{_submit_dir}/{student['name']}")
-                utils.download_from_github(
-                    student["url"],
-                    os.path.join(_submit_dir, student['name']),
-                    f"_{str(data['assignment']).replace('.csv', '')}",
-                    student["name"]
-                )
-            else:
-                pass
-        return 0
-    else:
-        print("There was an error getting data from input")
-        return 0
-
-
-def update(data):
-    if data:
-        _new_dir = os.path.join(data["folder"])
-        _eval_dir = os.path.join(data["folder"], _sub_dirs[0])
-        _submit_dir = os.path.join(data["folder"], _sub_dirs[1])
-        _assignment_file = os.path.join("resources", "AssignmentCSVFiles", data["assignment"])
-        _template_file = os.path.join("resources", "GradingMDFiles", f'{data["template"]}'.strip())
-
-        for student in data["students"]:
-            if not str(student["url"]).strip() == "null":
-                # Student has url in csv file
-                # Check if submission already present
-                student_dir = student["name"].replace(' ', '_')
-                if not os.path.exists(os.path.join(data["folder"], "Submissions", student_dir, f'{student_dir}{data["assignment"].repace(".csv", ".zip")}')):
-                    # Student submission ZIP doesn't exit
-                    print(f"{_submit_dir}/{student['name']}")
+                if not os.path.isfile(os.path.join(_new_dir, "Submissions", student["name"].replace(' ', '_'), filename)):
+                    print(f"Downloading submission to {os.path.join(_new_dir, 'Submissions', student['name'].replace(' ', '_'), filename)}")
                     utils.download_from_github(
                         student["url"],
                         os.path.join(_submit_dir, student['name']),
                         f"_{str(data['assignment']).replace('.csv', '')}",
                         student["name"]
                     )
+                else:
+                    print("Already submitted")
+            else:
+                print(f"{student['name']} missing submission")
+        return 0
+    else:
+        print("There was an error getting data from input")
+        return 0

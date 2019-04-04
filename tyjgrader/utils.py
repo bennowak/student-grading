@@ -99,6 +99,10 @@ def create_eval_files(names, eval_dir, path_to_eval_template, assignment, due_da
             eval_file.close()
 
 
+def create_file_name(student, assignment, ext):
+    return f"{student.replace(' ', '_')}{assignment.replace(' ', '_')}{ext.replace(' ', '_')}"
+
+
 def extract_base_url(url):
     parts = url.split('/')
     return f"{parts[0]}//{parts[2]}/{parts[3]}/{parts[4]}"
