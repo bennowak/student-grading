@@ -7,13 +7,51 @@ The program takes a `csv` file containing assignment data, student names, and ur
 ## Process Description
 The script will search the `resources/AssignmentCSVFiles` directory for existing assignment files.  These will show up in the main running menu.  The first row of the selected `assignment.csv` file will be parsed for assignment data used to generate a specific directory structure under the `Gradings` directory. The subsequent rows contain student names, and submission URLs for processing and downloading assignments automatically.
 
+## Folder Organization Concerns
 
-### "Parts" of the Process
+This program is intended to reside inside a single directory where the grader (TA, Instructor, etc.) does all of their grading.  This will mean that each call to the program will either generate a new directory, or update the records for existing assignment directories with the `Grading` directory.  So what does this look like as originally intended by the author.
+
+    - Grading/
+        - Homework01_Some_Homework/
+        - Homework02_Some_more_homework/
+        - Homework03_Even_more_homework/
+            - Grades/
+                - Student01.md
+                - Student02.md
+                - Student03.md
+            - Instructions/
+            - Solutions/
+            - Submissions/
+                - Student01/
+                    - Student01.zip
+                - Student02/
+                    - Student02.zip
+                - Student03/
+                    - Student03.zip
+    - resources/
+        - AssignmentCSVFiles
+            - Homework01_Some_Homework.csv
+            - Homework02_Some_more_homework.csv
+            - Homework03_Even_more_homework.csv
+        - GradingMDFiles
+            - Homework01_Some_Homework.md
+            - Homework02_Some_more_homework.md
+            - Homework03_Even_more_homework.md
+        student_list.txt
+    - TEMPLATES/
+    - tyjgrader/
+    - run_tyjgrader.py (program script)
+
+## Before running the script: 
+- a **copy** of the `TEMPLATE_GradeSheet.md` file has been named and customized to reflect the rubric and grading concerns for that particular assignment, and has been placed in the `GradingMDFiles` directory.
+- a **copy** of the `TEMPLATE_Assignment.csv`file has been properly prepared, named, and moved to the `AssignmentCSVFiles` directory
+
+## "Parts" of the Process
 
 - #### run_tyjgrader.py
     This is the main entry point for the application.  Run the script as follows:
 
-    ```python
+    ```
     python run_tyjgrader.py
     ```
 - #### ./tyjgrader/ (module)
@@ -37,6 +75,15 @@ The script will search the `resources/AssignmentCSVFiles` directory for existing
 
 - #### ./Gradings/
     This is where the directories that are created for grading assignments will be output.
+
+    - #### <OUTPUT_DIR>
+        The generated directory for a particular assignment
+        
+        - #### Grades
+            The directory that holds the Markdown "grading sheets" for each student
+        
+        - #### Submissions
+            Directory with individual directories for each student that contain the downloaded submissions
     
 ### Output
 
@@ -52,29 +99,16 @@ Running the script at the command line will yield the following structure :
 
 ![The Output](docs/Output.png)
 
-## Folder Organization Concerns
+## Additional Notes
+- If you are intending to store your grades and student submissions in a git repository or on a remote repository hosting service (such as GitHub, or others) then be sure to edit the `.gitignore` file to allow the tracking of the `.zip` files in the student submissions.
+- Running the process on existing assignments (whith existing directories, and such) will only update "new" submissions from the assignment file.  Existing submissions will not be overwritten.
+- If you need to update a submission consider either removing the original submission `grade_sheet` and `url` in the assignment csv file, or adding a second entry for the same student (using a variation on their name to indicate the different submission.)
+- If you are unclear about some fo the specifics, I encourage you to run a few tests using the test `assignment` to see how the script works.
 
-This program is intended to reside inside a single directory where the grader (TA, Instructor, etc.) does all of their grading.  This will mean that each call to the program should supply different arguments for different assignments.  Rerunning the script with the same arguments may either overwrite previously existent files or simply fail to execute part of the script.  So what does this look like as originally intended by the author.
-
-    - `Grading` (folder)
-        - Homework01_Some_Homework
-        - Homework02_Some_more_homework
-        - Resources
-            - hw1_students.csv
-            - hw2_students.csv
-            - hw1_gradingTemplate.md
-            - hw2_gradingTemplate.md
-            - GRADING_TEMPLATE.md
-        - `tyjgrader` (module folder)
-
-Before running the script: 
-- a copy of the GRADING_TEMPLATE.md file has been customized to reflect the rubric and grading concerns for that particular assignment
-- a separate `csv` for each assignment has been created containing valid URLs pointing to the GitHub `master` branch for the relevant student's submission
-- arguments to the program have been entered meticulously and accurately
 
 ## If An Error Occurs
 
-- Delete the folder for that assignment and try again and check the formatting of your csv and arguments to the `run_tyjgrader.py` script.
+- Delete the folder for that assignment and try again and check the formatting of your `assignment.csv` and `grade_sheet.md` files for that particular assignment. Be sure to follow the template form exactly.
 
 - Report issues here [here](https://github.com/bennowak/student-grading/issues)
 
