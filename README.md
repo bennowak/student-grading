@@ -46,6 +46,28 @@ This program is intended to reside inside a single directory where the grader (T
 - a **copy** of the `TEMPLATE_GradeSheet.md` file has been named and customized to reflect the rubric and grading concerns for that particular assignment, and has been placed in the `GradingMDFiles` directory.
 - a **copy** of the `TEMPLATE_Assignment.csv`file has been properly prepared, named, and moved to the `AssignmentCSVFiles` directory
 
+## The Assignment File
+- The very first line of the assignment `csv` file contains a comma-separated set of values.  
+    ```csv
+    new_dir_name, Assignment Title, Date String without commas, name_of_gradesheet_file.md, Grader Name
+    ```
+    
+    In order they are:
+    1. `new_dir_name` : The folder name for the assignment directory.  No spaces.
+    2. `Assignment Title` : Human readable name/title of the assignment.  This gets populated in the grading sheets
+    3. `Date string without commas` : Human readable date string. No commas
+    4. `name_of_gradesheet_file.md` : The name of the gradesheet template for the particular assignment
+    5. `Grader Name` : Human readable name of the TA/Instructor doing the grading for this assignment.  Theis gets populated in the grading sheets
+    
+- The remaining lines are entries for each student with the url for their submission:
+    ```csv
+    student name, https://www.github.com/studentgithubusername/repository
+    ```
+    
+
+## The GradingSheet File
+- The basic template for the grading sheets can be customized.  However there are some "convenience" feild placeholders that should be maintained for "automatic" populating of data during generation.  These are surrounded by `<` and `>` symbols to denote either replacement during processing, or manual replacement during the actual grading process.
+
 ## "Parts" of the Process
 
 - #### run_tyjgrader.py
