@@ -18,5 +18,6 @@
 from tyjgrader import assignment, utils
 
 
-assignment.create_grades()
+#print(utils.get_assignment_data("test.csv"))
+print(assignment.get_input())
 # utils.new_assignment("test", "testass", "234234", "ben")

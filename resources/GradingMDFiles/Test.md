@@ -1,10 +1,12 @@
-# Assignment : asdf
+# Assignment : <assignment>
 
-## Student Name : Jam Out
+## Student Name : <name>
 
-### Due Date : asdf
+### Due Date : <due>
 
 ### Submitted Date : <submit>
+
+### Graded By: <graded_by>
 
 ### Grade : <grade>
 

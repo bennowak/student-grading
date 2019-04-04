@@ -20,6 +20,34 @@ from urllib import request
 import csv
 
 
+def get_assignment_data(assignment):
+    if assignment:
+        with open(os.path.join("resources", "AssignmentCSVFiles", assignment)) as csvfile:
+            csv_reader = csv.reader(csvfile, delimiter=',')
+            # Get first line which is assignment info
+            info = next(csv_reader)
+            students = []
+            # correct number of values is 4
+            if len(info) == 5:
+                for student in csv_reader:
+                    students.append({"name": student[0], "url": student[1]})
+                assignment = {
+                    "folder": info[0],
+                    "assignment": assignment,
+                    "title": info[1],
+                    "due_date": info[2],
+                    "template": info[3],
+                    "graded_by": info[4].strip(),
+                    "students": students
+                }
+                return assignment
+            else:
+                print("Error: Incorrectly formatted assignment csv file")
+                return False
+    else:
+        print("Error: assignment argument invalid in get_assignment_data")
+        return False
+
 def get_names(students_csv):
     names = []
     with open(students_csv) as csvfile:
@@ -44,15 +72,15 @@ def get_students(students_csv):
 def create_dirs(parent_dir, names):
     if os.path.exists(parent_dir):
         for name in names:
-            os.makedirs(parent_dir + "/" + name)
+            os.makedirs(parent_dir + "/" + name.replace(' ', '_'))
 
 
-def create_eval_files(names, eval_dir, path_to_eval_template, assignment, due_date):
+def create_eval_files(names, eval_dir, path_to_eval_template, assignment, due_date, graded_by):
     if os.path.exists(eval_dir):
         with open(path_to_eval_template) as template:
             content = template.readlines()
         for name in names:
-            eval_file = open(f"{eval_dir}/" + name + ".md", 'w', 1)
+            eval_file = open(f"{eval_dir}/" + name.replace(' ', '_') + ".md", 'w', 1)
             for line in content:
                 if "<name>" in line:
                     newline = line.replace("<name>", name.replace('_', ' '))
@@ -62,6 +90,9 @@ def create_eval_files(names, eval_dir, path_to_eval_template, assignment, due_da
                     eval_file.writelines(newline)
                 elif "<due>" in line:
                     newline = line.replace("<due>", due_date)
+                    eval_file.writelines(newline)
+                elif "<graded_by>" in line:
+                    newline = line.replace("<graded_by>", graded_by)
                     eval_file.writelines(newline)
                 else:
                     eval_file.writelines(line)
@@ -99,77 +130,13 @@ def new_assignment(file_name, title, due_date, graded_by):
 
 
 
-# Prompts for data and either returns a dicitonary or False if exited
-def get_input():
-    # Generate a dictionary for csv and md files available
-    csv_list = get_csv_list()
-    temp_list = get_template_list()
-    assignments = {}
-    for i in range(1, len(csv_list) + 1):
-        assignments.update({str(i): csv_list[i - 1]})
-    templates = {}
-    for i in range(1, len(temp_list) + 1):
-        templates.update({str(i): temp_list[i - 1]})
-
-    # Sentinel variables
-    valid_csv = False
-    valid_temp = False
-    selected_csv = -1
-    selected_temp = -1
-
-    # Prompt for csv file selection
-    while not valid_csv:
-        # Print selection menu
-        print("Please choose from the following assignment files")
-        for i in range(1, len(assignments) + 1):
-            print(f"{i}.) {assignments[str(i)]}")
-        print("Enter X to quit")
-        # Get valid input
-        selection = validate_input(input("Selection : "), len(assignments))
-        # If input is within valid range set selected_csv variable and exit while loop
-        if selection >= 0:
-            valid_csv = True
-            selected_csv = selection
-    # If not exiting the program
-    if selected_csv > 0:
-        # Prompt for template file selection
-        while not valid_temp:
-            # Print selection menu
-            print("Please choose from the following grading templates")
-            for i in range(1, len(templates) + 1):
-                print(f"{i}.) {templates[str(i)]}")
-            print("Enter X to quit")
-            # Get valid input
-            selection = validate_input(input("Selection : "), len(templates))
-            # If input is within valid range set selected_temp variable and exit while loop
-            if selection >= 0:
-                valid_temp = True
-                selected_temp = selection
-        # Prompt for other data
-        # title = input("What is the TITLE for the assignment? (Readable title for grade sheet, etc.")
-        # due_date = input("What is the DUE DATE for the assignment? (Readable date)")
-        folder_name = input("Please enter name for the folder. (NO SPACES, use underscore `_`").replace(' ', '_')
-        # Return a dict with data values
-        #return {"assignment": assignments[str(selected_csv)], "template": templates[str(selected_temp)]}
-        return {"assignment": assignments[str(selected_csv)]}
-    # Exit chosen; return false
-    return False
-
-
-def get_assignment_data(assignment):
-
-
-# Test for valid user input
-def validate_input(selection, choice_count):
+def is_valid_selection(selection, choice_count):
     if len(selection) == 1:
         if selection.isdigit() and 0 < int(selection) <= choice_count:
-            return int(selection)
-        elif ord(selection) == 88 or ord(selection) == 120:
-            return 0
-        else:
-            return -1
-    else:
-        return -1
+            return True
+        elif ord(selection) == 88 or ord(selection) == 120 or ord(selection) == 78 or ord(selection) == 110:
+            return True
+    return False
 
 
 def get_csv_list():
@@ -181,3 +148,59 @@ def get_template_list():
     grading_templates = os.listdir(os.path.join('.', 'resources', 'GradingMDFiles'))
     return grading_templates
 
+
+# # Prompts for data and either returns a dicitonary or False if exited
+# def get_input():
+#     # Generate a dictionary for csv and md files available
+#     csv_list = get_csv_list()
+#     temp_list = get_template_list()
+#     assignments = {}
+#     for i in range(1, len(csv_list) + 1):
+#         assignments.update({str(i): csv_list[i - 1]})
+#     templates = {}
+#     for i in range(1, len(temp_list) + 1):
+#         templates.update({str(i): temp_list[i - 1]})
+#
+#     # Sentinel variables
+#     valid_csv = False
+#     valid_temp = False
+#     selected_csv = -1
+#     selected_temp = -1
+#
+#     # Prompt for csv file selection
+#     while not valid_csv:
+#         # Print selection menu
+#         print("Please choose from the following assignment files")
+#         for i in range(1, len(assignments) + 1):
+#             print(f"{i}.) {assignments[str(i)]}")
+#         print("Enter X to quit")
+#         # Get valid input
+#         selection = validate_input(input("Selection : "), len(assignments))
+#         # If input is within valid range set selected_csv variable and exit while loop
+#         if selection >= 0:
+#             valid_csv = True
+#             selected_csv = selection
+#     # If not exiting the program
+#     if selected_csv > 0:
+#         # Prompt for template file selection
+#         while not valid_temp:
+#             # Print selection menu
+#             print("Please choose from the following grading templates")
+#             for i in range(1, len(templates) + 1):
+#                 print(f"{i}.) {templates[str(i)]}")
+#             print("Enter X to quit")
+#             # Get valid input
+#             selection = validate_input(input("Selection : "), len(templates))
+#             # If input is within valid range set selected_temp variable and exit while loop
+#             if selection >= 0:
+#                 valid_temp = True
+#                 selected_temp = selection
+#         # Prompt for other data
+#         # title = input("What is the TITLE for the assignment? (Readable title for grade sheet, etc.")
+#         # due_date = input("What is the DUE DATE for the assignment? (Readable date)")
+#         folder_name = input("Please enter name for the folder. (NO SPACES, use underscore `_`").replace(' ', '_')
+#         # Return a dict with data values
+#         #return {"assignment": assignments[str(selected_csv)], "template": templates[str(selected_temp)]}
+#         return {"assignment": assignments[str(selected_csv)]}
+#     # Exit chosen; return false
+#     return False
