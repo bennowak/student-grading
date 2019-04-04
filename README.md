@@ -61,8 +61,12 @@ This program is intended to reside inside a single directory where the grader (T
     
 - The remaining lines are entries for each student with the url for their submission:
     ```csv
-    student name, https://www.github.com/studentgithubusername/repository
+    student1 name, https://www.github.com/studentgithubusername/repository
+    student2 name, null
+  
     ```
+- Be aware that the student submission entries in the csv file will initially be populated with "null". You will have to manually replace null with student submission URLs.  As you get more submissions, you can add the URLs and re-process the assignment to update the student's submission.  Previously generated submissions will be ignored.
+- The URL value must either be a valid GitHub repository link, or null.  Anything else may break the script.
     
 
 ## The GradingSheet File
