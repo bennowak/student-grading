@@ -29,7 +29,7 @@
 # output and non-relevant, non-production files
 #
 ################################################
-*.zip
+Gradings/**/Submisions/**.zip
 TEMPLATE_GradeSheetMASTER.md
 
 
