@@ -94,8 +94,7 @@ def process_assignment(data):
             utils.create_dirs(_new_dir, _sub_dirs)
             # Create student submission folders
             utils.create_dirs(_submit_dir, names)
-            # Generate evaluation files for each student
-            utils.create_eval_files(names, _eval_dir, _template_file, data["title"], data["due_date"], data["graded_by"])
+
             # download student assignments
         for student in students:
             filename = utils.create_file_name(student["name"], f'_{data["assignment"].strip(".csv")}', ".zip")
@@ -113,6 +112,8 @@ def process_assignment(data):
                     print("Already submitted")
             else:
                 print(f"{student['name']} missing submission")
+        # Generate evaluation files for each student
+        utils.create_eval_files(names, _eval_dir, _template_file, data["title"], data["due_date"], data["graded_by"])
         return 0
     else:
         print("There was an error getting data from input")

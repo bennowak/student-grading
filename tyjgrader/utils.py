@@ -104,7 +104,8 @@ def create_file_name(student, assignment, ext):
 
 
 def extract_base_url(url):
-    parts = url.split('/')
+    parts = url.replace(".git", "").split('/')
+    print(parts)
     return f"{parts[0]}//{parts[2]}/{parts[3]}/{parts[4]}"
 
 
